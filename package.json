@@ -1,0 +1,21 @@
+{
+  "name": "tekoi",
+  "version": "1.0.0",
+  "description": "A small programming language for parsing math, logic, and CS expressions.",
+  "main": "tekoi.mjs",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ketiboldiais/tekoi.git"
+  },
+  "author": "ketiboldiais <numerstack@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ketiboldiais/tekoi/issues"
+  },
+  "homepage": "https://github.com/ketiboldiais/tekoi#readme",
+  "keywords": []
+}
