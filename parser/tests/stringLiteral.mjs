@@ -1,3 +1,10 @@
 export const testStringLiteral = {
-	program: '"Hello"',
+	program: '"test string"',
+	expected: {
+		type: "Program",
+		body: {
+			type: "StringLiteral",
+			value: "test string",
+		},
+	},
 };
