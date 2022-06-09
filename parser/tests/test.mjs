@@ -1,12 +1,8 @@
 import { Parser } from "../Parser.mjs";
-import { testExpressionStatement } from "./expressionStatements.mjs";
-import { blockTest } from "./blockTest.mjs";
 import { checkExpect } from "../../utilities/CheckExpect.mjs";
+import { do_while_test } from "./iteration_tests/do_while_test.mjs";
 
-const tests = [
-	// testExpressionStatement,
-	blockTest
-];
+const tests = [do_while_test];
 
 (() => {
 	const parser = new Parser();

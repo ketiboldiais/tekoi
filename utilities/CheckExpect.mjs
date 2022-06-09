@@ -1,11 +1,30 @@
-export const checkExpect = (actual, expected, message = "") => {
+import { deepEqual } from "./deepEqual.mjs";
+import { consoleColors } from "./consoleColors.js";
+
+const sucessMessage = (testName, message) => {
+	console.log(consoleColors.fg.green);
+	console.log(`${testName} PASSED\n${message}`);
+	console.log(consoleColors.reset);
+};
+
+const failMessage = (testName, message) => {
+	console.log(consoleColors.fg.red);
+	console.log(`${testName} FAILED\n${message}`);
+	console.log(consoleColors.reset);
+};
+
+export const checkExpect = (
+	actual,
+	expected,
+	testName = "Test",
+	message = "",
+) => {
 	if (message === "") {
-		message = `Result: ${actual}, Expected: ${expected}`;
+		let resultString = JSON.stringify(actual, null, 2);
+		let expectedString = JSON.stringify(expected, null, 2);
+		message = `Result: ${resultString},\nExpected: ${expectedString}`;
 	}
-	const result = actual === expected;
-	if (result) {
-		console.log(`Test passed | ${message}`);
-	} else {
-		console.log(`Test failed | ${message}`);
-	}
-}
+	const result = deepEqual(actual, expected);
+	if (result) sucessMessage(testName, message);
+	else failMessage(testName, message);
+};

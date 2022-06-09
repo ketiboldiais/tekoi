@@ -1,19 +1,18 @@
-/* ------------------------ */
-/*         TOKENIZER        */
-/* ------------------------ */
 /* § Overview
  * The tokenizer extracts individual tokens from a stream of tokens.
  * The tokens themselves can be different type.
  */
 
+import { TokenDefinitions } from "../TokenDefinitions/tokenDefinitions.mjs";
+import { isNull } from "../utilities/nullCheck.mjs";
+
 class Tokenizer {
 	init(string) {
 		this._string = string;
-
-		// § PROPERTY - cursor
+		// § Cursor
 			//	The cursor points to each individual 
 			//	character in the string.
-			//	EXAMPLE
+			//  Example:
 			//		1. First 'x':
 			//			x  =  y
 			//		 ^
@@ -33,62 +32,52 @@ class Tokenizer {
 		this._cursor = 0;
 	}
 
-	// § CHECK-METHOD - isEOF
+	// § Is end of file?
 		// Determines whether the tokenizer
 		// has reached the end of the file.
-	isEOF() {
-		return this._cursor === this._string.length;
-	}
+	isEOF() { return this._cursor === this._string.length; }
 
 
-	// § CHECK-METHOD - hasMoreTokens
+	// § Has more tokens?
 		// Returns true if there is a token remaining in the string
 		// Otherwise false
 		// Dependents: getNextToken() 
-	hasMoreTokens() {
-		return this._cursor < this._string.length;
-	}
+	hasMoreTokens() { return this._cursor < this._string.length; }
 
-	// § METHOD - getNextToken()
+	// § Get Next Token
 		// obtains the next token.
 	getNextToken() {
 		if (!this.hasMoreTokens()) return null;
 
 		const string = this._string.slice(this._cursor);
-		
-		// § SUB-METHOD - get number tokens
-		if (!Number.isNaN(Number(string[0]))) {
-			let number = '';
-			while (!Number.isNaN(Number(string[this._cursor]))) {
-				number += string[this._cursor++];
-			}
-			return {
-				type: 'NUMBER',
-				value: number,
-			}
-		}
 
-		// § SUB-METHOD - get string tokens
-		// strings in Tekoi are indicated with double quotes
-			// while-loop's terminating conditions:
-			// 1. we've reached the closing double quote, or
-			// 2. we've reached the end of the file
-		if (string[0] === '"') {
-			let s = '';
+		for (const [regexp, tokenType] of TokenDefinitions) {
+			const tokenValue = this._match(regexp, string);
 
-			do {
-				s += string[this._cursor++];
-			} while (string[this._cursor] !== '"' && !this.isEOF());
+			// no match to the rule? continue
+			if (isNull(tokenValue)) continue;
 
-			s += this._cursor++; // append closing double-quote
+			// if the token is whitespace, skip the token
+			if (isNull(tokenType)) return this.getNextToken();
 
 			return {
-				type: 'STRING',
-				value: s
+				type: tokenType,
+				value: tokenValue,
 			};
 		}
 
-		return null;
+		// If we tried matching all the regex and we got no matches,
+		// throw an error
+		throw new SyntaxError(`Unexpected token: "${string[0]}"`);
+	}
+
+	// § Regex Match Helper
+		// returns the token matching the regular expression regexp
+	_match(regexp, string) {
+		const matched = regexp.exec(string);
+		if (isNull(matched)) return null;
+		this._cursor += matched[0].length;
+		return matched[0];
 	}
 }
 
